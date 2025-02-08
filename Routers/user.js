@@ -10,7 +10,7 @@ const router = express.Router() ;
 
 router.get("/profile",getAccessToRoute ,profile)
 
-router.post("/editProfile",[getAccessToRoute ,imageUpload.single("photo")],editProfile)
+router.post("/edit_profile",[getAccessToRoute ,imageUpload.single("photo")],editProfile)
 
 router.put("/changePassword",getAccessToRoute,changePassword)
 

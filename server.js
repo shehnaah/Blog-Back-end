@@ -1,39 +1,48 @@
-const express = require("express")
-const dotenv = require("dotenv")
-const cors = require("cors")
-const path = require("path")
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const path = require("path");
 
-const IndexRoute = require("./Routers/index")
-const connectDatabase = require("./Helpers/database/connectDatabase")
-const customErrorHandler = require("./Middlewares/Errors/customErrorHandler")
+const IndexRoute = require("./Routers/index");
+const connectDatabase = require("./Helpers/database/connectDatabase");
+const customErrorHandler = require("./Middlewares/Errors/customErrorHandler");
 
-dotenv.config({
-    path:  './config/config.env'
-})
+dotenv.config({ path: "./config/config.env" });
 
-connectDatabase()
+// Connect to Database
+connectDatabase();
 
-const app = express() ;
+const app = express();
 
-app.use(express.json())
-app.use(cors())
+// Middleware
+app.use(express.json());
+// Configure CORS
+app.use(
+    cors({
+        origin: "http://localhost:3000",        
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
 
-app.use("/",IndexRoute)
+// Serve Static Files
+app.use("/storyImages", express.static(path.join(__dirname, "public/storyImages")));
+app.use("/userPhotos", express.static(path.join(__dirname, "public/userPhotos")));
 
-app.use(customErrorHandler)
+// Routes
+app.use("/", IndexRoute);
 
-const PORT = process.env.PORT || 5000 ;
+// Custom Error Handler Middleware
+app.use(customErrorHandler);
 
-app.use(express.static(path.join(__dirname , "public") ))
+const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT,()=>{
+const server = app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT} - Mode: ${process.env.NODE_ENV}`);
+});
 
-    console.log(`Server running on port  ${PORT} : ${process.env.NODE_ENV}`)
-
-})
-
-process.on("unhandledRejection",(err , promise) =>{
-    console.log(`Logged Error : ${err}`)
-
-    server.close(()=>process.exit(1))
-})
+// Handle Unhandled Promise Rejections
+process.on("unhandledRejection", (err, promise) => {
+    console.error(`🔥 Error: ${err.message}`);
+    server.close(() => process.exit(1));
+});

@@ -1,35 +1,43 @@
 const CustomError = require("../../Helpers/error/CustomError");
-const User = require("../../Models/user")
+const User = require("../../Models/user");
 const jwt = require("jsonwebtoken");
-const asyncErrorWrapper =require("express-async-handler")
-const { isTokenIncluded ,getAccessTokenFromHeader} = require("../../Helpers/auth/tokenHelpers");
+const asyncErrorWrapper = require("express-async-handler");
+const { isTokenIncluded, getAccessTokenFromHeader } = require("../../Helpers/auth/tokenHelpers");
 
+const getAccessToRoute = asyncErrorWrapper(async (req, res, next) => {
+    const { JWT_SECRET_KEY } = process.env;
 
-const getAccessToRoute = asyncErrorWrapper(async(req,res,next) =>{
-
-    const {JWT_SECRET_KEY} =process.env ;
-
-    if(!isTokenIncluded(req)) {
-
-        return next(new CustomError("You are not authorized to access this route ", 401))
+    console.log("🔍 Checking if token is included..."); // Debugging
+    if (!isTokenIncluded(req)) {
+        console.log("🚨 No token found in headers!");
+        return next(new CustomError("You are not authorized to access this route", 401));
     }
 
-    const accessToken = getAccessTokenFromHeader(req)
+    const accessToken = getAccessTokenFromHeader(req);
+    console.log("🛠 Token extracted:", accessToken); // Debugging
 
-    const decoded = jwt.verify(accessToken,JWT_SECRET_KEY) ;
+    try {
+        // Verify token
+        const decoded = jwt.verify(accessToken, JWT_SECRET_KEY);
+        console.log("✅ Token decoded successfully:", decoded); // Debugging
 
-    const user = await User.findById(decoded.id)
-   
-    if(!user) {
-        return next(new CustomError("You are not authorized to access this route ", 401))
+        // Find user
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            console.log("🚨 User not found in database!");
+            return next(new CustomError("User not found. Authorization denied.", 401));
+        }
+
+        console.log("👤 User found:", user.username); // Debugging
+        req.user = user;
+        next();
+    } catch (error) {
+        console.log("🚨 Error verifying token:", error.message); // Debugging
+        if (error.name === "TokenExpiredError") {
+            return next(new CustomError("JWT expired. Please log in again.", 401));
+        }
+        return next(new CustomError("Invalid token. Authorization denied.", 401));
     }
+});
 
-    req.user = user ; 
-
-    next()
-
-})
-
-
-
-module.exports ={getAccessToRoute}
+module.exports = { getAccessToRoute };

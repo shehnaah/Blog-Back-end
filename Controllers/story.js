@@ -20,11 +20,13 @@ const addStory = asyncErrorWrapper(async  (req,res,next)=> {
             image : req.savedStoryImage,
             readtime
         })
+        console.log("Uploaded Image:", req.file); 
 
         return res.status(200).json({
             success :true ,
             message : "add story successfully ",
             data: newStory
+            
         })
     }
 
