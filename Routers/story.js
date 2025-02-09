@@ -1,8 +1,7 @@
 const express = require("express")
 const imageupload = require("../Helpers/Libraries/imageUpload");
-
 const { getAccessToRoute } = require("../Middlewares/Authorization/auth");
-const {addStory,getAllStories,detailStory,likeStory, editStory, deleteStory, editStoryPage } = require("../Controllers/story")
+const {addStory,getAllStories,detailStory,likeStory, editStory, deleteStory, editStoryPage,myStories } = require("../Controllers/story")
 const { checkStoryExist, checkUserAndStoryExist } = require("../Middlewares/database/databaseErrorhandler");
 
 const router = express.Router() ;
@@ -18,9 +17,11 @@ router.get("/editStory/:slug",[getAccessToRoute,checkStoryExist,checkUserAndStor
 
 router.put("/:slug/edit",[getAccessToRoute,checkStoryExist,checkUserAndStoryExist, imageupload.single("image")] ,editStory)
 
-router.delete("/:slug/delete",[getAccessToRoute,checkStoryExist,checkUserAndStoryExist] ,deleteStory)
+router.delete("/:slug/delete",deleteStory)
 
 router.get("/getAllStories",getAllStories)
+
+router.get("/mystories", getAccessToRoute, myStories);
 
 
 module.exports = router

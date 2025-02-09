@@ -3,6 +3,7 @@ const Story = require("../Models/story");
 const deleteImageFile = require("../Helpers/Libraries/deleteImageFile");
 const {searchHelper, paginateHelper} =require("../Helpers/query/queryHelpers")
 
+
 const addStory = asyncErrorWrapper(async  (req,res,next)=> {
 
     const {title,content} = req.body 
@@ -64,6 +65,21 @@ const getAllStories = asyncErrorWrapper( async (req,res,next) =>{
         })
 
 })
+
+const myStories = asyncErrorWrapper(async (req, res, next) => {
+    const userId = req.user._id; // Get logged-in user's ID
+
+    try {
+        const stories = await Story.find({ author: userId }).sort("-createdAt"); // Fetch user's stories
+        return res.status(200).json({
+            success: true,
+            count: stories.length,
+            data: stories
+        });
+    } catch (error) {
+        return next(error);
+    }
+});
 
 const detailStory =asyncErrorWrapper(async(req,res,next)=>{
 
@@ -168,28 +184,38 @@ const editStory  =asyncErrorWrapper(async(req,res,next)=>{
 
 })
 
-const deleteStory  =asyncErrorWrapper(async(req,res,next)=>{
+const deleteStory  = asyncErrorWrapper(async(req,res,next)=>{
+    const { slug } = req.params;
+    
+    console.log("Deleting story with slug:", slug); // 🛠 Debugging log
 
-    const {slug} = req.params  ;
+    const story = await Story.findOne({ slug: slug });
 
-    const story = await Story.findOne({slug : slug })
+    if (!story) {
+        console.log("Story not found!"); // 🛠 Debugging log
+        return res.status(404).json({
+            success: false,
+            message: "Story not found"
+        });
+    }
 
-    deleteImageFile(req,story.image) ; 
+    deleteImageFile(req, story.image); 
 
-    await story.remove()
+    await story.deleteOne(); // Correct deletion method
 
-    return res.status(200).
-        json({
-            success:true,
-            message : "Story delete succesfully "
-    })
+    console.log("Story deleted successfully!"); // 🛠 Debugging log
 
-})
+    return res.status(200).json({
+        success: true,
+        message: "Story deleted successfully"
+    });
+});
 
 
 module.exports ={
     addStory,
     getAllStories,
+    myStories,
     detailStory,
     likeStory,
     editStoryPage,
