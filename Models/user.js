@@ -1,6 +1,6 @@
 const crypto = require("crypto")
 const mongoose = require("mongoose")
-const bcrypt = require("bcrypt")
+const bcryptjs = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const { type } = require("os")
 
@@ -51,7 +51,7 @@ UserSchema.pre("save" , async function (next) {
    }
 
    const salt = await bcrypt.genSalt(10)
-   this.password = await bcrypt.hash(this.password,salt)
+   this.password = await bcryptjs.hash(this.password,salt)
    next();
 })
 
