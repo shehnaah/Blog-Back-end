@@ -1,4 +1,4 @@
-const bycrpt = require("bcryptjs")
+const bycrptjs = require("bcryptjs")
 
 const validateUserInput =(email,password) =>{
 
@@ -10,7 +10,7 @@ const validateUserInput =(email,password) =>{
 
 const comparePassword =  (password , hashedPassword) =>{
 
-    return  bycrpt.compareSync(password,hashedPassword)
+    return  bycrptjs.compareSync(password,hashedPassword)
 
 }
 
