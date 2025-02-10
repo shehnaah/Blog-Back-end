@@ -9,14 +9,11 @@ const customErrorHandler = require("./Middlewares/Errors/customErrorHandler");
 
 dotenv.config({ path: "./config/config.env" });
 
-// Connect to Database
 connectDatabase();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
-// Configure CORS
 app.use(
     cors({
         origin: "http://localhost:3000",        

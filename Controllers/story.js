@@ -67,10 +67,10 @@ const getAllStories = asyncErrorWrapper( async (req,res,next) =>{
 })
 
 const myStories = asyncErrorWrapper(async (req, res, next) => {
-    const userId = req.user._id; // Get logged-in user's ID
+    const userId = req.user._id; 
 
     try {
-        const stories = await Story.find({ author: userId }).sort("-createdAt"); // Fetch user's stories
+        const stories = await Story.find({ author: userId }).sort("-createdAt"); 
         return res.status(200).json({
             success: true,
             count: stories.length,
@@ -164,12 +164,10 @@ const editStory  =asyncErrorWrapper(async(req,res,next)=>{
     story.image =   req.savedStoryImage ;
 
     if( !req.savedStoryImage) {
-        // if the image is not sent
         story.image = image
     }
     else {
-        // if the image sent
-        // old image locatıon delete
+
        deleteImageFile(req,previousImage)
 
     }
@@ -187,12 +185,12 @@ const editStory  =asyncErrorWrapper(async(req,res,next)=>{
 const deleteStory  = asyncErrorWrapper(async(req,res,next)=>{
     const { slug } = req.params;
     
-    console.log("Deleting story with slug:", slug); // 🛠 Debugging log
+    console.log("Deleting story with slug:", slug); 
 
     const story = await Story.findOne({ slug: slug });
 
     if (!story) {
-        console.log("Story not found!"); // 🛠 Debugging log
+        console.log("Story not found!"); 
         return res.status(404).json({
             success: false,
             message: "Story not found"
@@ -201,9 +199,9 @@ const deleteStory  = asyncErrorWrapper(async(req,res,next)=>{
 
     deleteImageFile(req, story.image); 
 
-    await story.deleteOne(); // Correct deletion method
+    await story.deleteOne(); 
 
-    console.log("Story deleted successfully!"); // 🛠 Debugging log
+    console.log("Story deleted successfully!");
 
     return res.status(200).json({
         success: true,

@@ -1,0 +1,52 @@
+ 
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables (🔒 Keep credentials safe)
+.env
+
+# Logs
+logs/
+*.log
+log/
+debug.log
+*.out
+*.pid
+*.seed
+*.pid.lock
+
+# Database (if using SQLite or other local DBs)
+*.sqlite
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+*.sqlite-journal
+dump.rdb
+
+# Compiled files
+dist/
+build/
+
+# Local environment files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files (optional)
+.vscode/
+.idea/
+*.swp
+
+# Process manager files (like PM2)
+pm2-log.log
+pids/
+
+# Coverage reports (if using Jest or Mocha for testing)
+coverage/
+.nyc_output/
+
+# Misc
+*.bak

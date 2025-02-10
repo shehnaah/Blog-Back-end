@@ -1,6 +1,6 @@
 const express = require("express")
 
-const imageUpload = require("../Helpers/Libraries/imageUpload");
+const imageUpload = require("../Helpers/libraries/imageUpload");
 
 const {profile,editProfile,changePassword,addStoryToReadList,readListPage} = require("../Controllers/user");
 const { getAccessToRoute } = require("../Middlewares/Authorization/auth");

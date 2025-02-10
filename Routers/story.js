@@ -1,5 +1,5 @@
 const express = require("express")
-const imageupload = require("../Helpers/Libraries/imageUpload");
+const imageupload = require("../Helpers/libraries/imageUpload");
 const { getAccessToRoute } = require("../Middlewares/Authorization/auth");
 const {addStory,getAllStories,detailStory,likeStory, editStory, deleteStory, editStoryPage,myStories } = require("../Controllers/story")
 const { checkStoryExist, checkUserAndStoryExist } = require("../Middlewares/database/databaseErrorhandler");

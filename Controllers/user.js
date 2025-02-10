@@ -102,24 +102,35 @@ const addStoryToReadList = asyncErrorWrapper(async (req, res, next) => {
 })
 
 const readListPage = asyncErrorWrapper(async (req, res, next) => {
+    try {
+        console.log("User ID from request:", req.user.id); 
 
-    const user = await User.findById(req.user.id)
-    const readList = []
+        const user = await User.findById(req.user.id).populate({
+            path: "readList",
+            populate: { path: "author" }
+        });
 
-    for (let index = 0; index < user.readList.length; index++) {
+        console.log("User data:", user);
 
-        var story = await Story.findById(user.readList[index]).populate("author")
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
 
-        readList.push(story)
+        console.log("Full ReadList before filtering:", user.readList); 
 
+        const filteredReadList = user.readList.filter(story => story !== null);
+        
+        console.log("Filtered ReadList:", filteredReadList); 
+
+        return res.status(200).json({
+            success: true,
+            data: filteredReadList
+        });
+    } catch (error) {
+        console.error("Error fetching reading list:", error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-
-    return res.status(200).json({
-        success: true,
-        data: readList
-    })
-
-})
+});
 
 module.exports = {
     profile,
